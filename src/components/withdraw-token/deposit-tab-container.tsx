@@ -7,7 +7,7 @@ import JsonLogger from "../log";
 import ConnectWallet from "../ui/connect-wallet";
 
 // Import objects
-import { TokenAPI } from "src/objects/token/api";
+// import { TokenAPI } from "src/objects/token/api";
 
 // Import utils
 import { WalletUtils } from "src/utils/wallet";

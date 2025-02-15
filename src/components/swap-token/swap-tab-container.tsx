@@ -40,33 +40,33 @@ export default function SwapTabContainer({
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
-    const fetchTokensInfo = async () => {
-      setLoading(true);
-      try {
-        const tokens = await TokenAPI.getTokenPrices();
+    // const fetchTokensInfo = async () => {
+    //   setLoading(true);
+    //   try {
+    //     const tokens = await TokenAPI.getTokenPrices();
 
-        // Tìm token từ danh sách dựa vào symbol
-        const from = tokens.find(
-          (t) => t.symbol.toLowerCase() === fromSymbol.toLowerCase()
-        );
-        const to = tokens.find(
-          (t) => t.symbol.toLowerCase() === toSymbol.toLowerCase()
-        );
+    //     // Tìm token từ danh sách dựa vào symbol
+    //     const from = tokens.find(
+    //       (t) => t.symbol.toLowerCase() === fromSymbol.toLowerCase()
+    //     );
+    //     const to = tokens.find(
+    //       (t) => t.symbol.toLowerCase() === toSymbol.toLowerCase()
+    //     );
 
-        setFromToken(from || null);
-        setToToken(to || null);
-        console.log("from", from);
-        console.log("to", to);
-      } catch (error) {
-        console.error("Error fetching tokens:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    //     setFromToken(from || null);
+    //     setToToken(to || null);
+    //     console.log("from", from);
+    //     console.log("to", to);
+    //   } catch (error) {
+    //     console.error("Error fetching tokens:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
-    if (isOpen) {
-      fetchTokensInfo();
-    }
+    // if (isOpen) {
+    //   fetchTokensInfo();
+    // }
   }, [isOpen, fromSymbol, toSymbol]);
 
   // Tính toán giá trị USD

@@ -6,7 +6,7 @@ import ChooseTokenModal from "./choose-token-modal";
 import ConnectWallet from "src/components/ui/connect-wallet";
 
 // Import objects
-import { TokenAPI } from "src/objects/token/api";
+// import { TokenAPI } from "src/objects/token/api";
 
 // Import utils
 import { WalletUtils } from "src/utils/wallet";

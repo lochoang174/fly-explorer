@@ -7,7 +7,7 @@ import JsonLogger from "../log";
 import ConnectWallet from "../ui/connect-wallet";
 
 // Import objects
-import { TokenAPI } from "src/objects/token/api";
+// import { TokenAPI } from "src/objects/token/api";
 
 // Import utils
 import { WalletUtils } from "src/utils/wallet";
@@ -34,11 +34,11 @@ export default function DepositeTabContainer({
   const { addDialog } = useConversationState();
 
   React.useEffect(() => {
-    TokenAPI.getTokenPriceByCoinType("0x2::abc::abc").then((price) => {
-      if (price) {
-        setPrice(price);
-      }
-    });
+    // TokenAPI.getTokenPriceByCoinType("0x2::abc::abc").then((price) => {
+    //   if (price) {
+    //     setPrice(price);
+    //   }
+    // });
   }, []);
 
 

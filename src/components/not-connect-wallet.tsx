@@ -1,5 +1,7 @@
 // Import components
 
+import ConnectWallet from "./ui/connect-wallet";
+
 export default function NotConnectWallet() {
   return (
     <div className="fixed flex flex-col justify-center items-center w-full h-screen z-30 backdrop-blur-md bg-white/50 transition-discrete">
@@ -8,7 +10,7 @@ export default function NotConnectWallet() {
         <h1 className="font-bold text-3xl">Surf faster with FlyFish</h1>
       </div>
       <p className="mb-3">You are not connected</p>
-      connect button
+      <ConnectWallet></ConnectWallet>
     </div>
   );
 }

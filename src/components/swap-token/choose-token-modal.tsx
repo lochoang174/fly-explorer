@@ -3,7 +3,7 @@ import axios from "axios";
 import { Dialog, Transition } from "@headlessui/react";
 
 // Import objects
-import { TokenAPI } from "src/objects/token/api";
+// import { TokenAPI } from "src/objects/token/api";
 
 // Import types
 import type { TokenData, WalletBalance } from "../../types/token";
@@ -34,75 +34,75 @@ export default function ChooseTokenModal({
   }, [isOpen, address]);
 
   const fetchTokensWithBalance = async () => {
-    setLoading(true);
-    try {
-      const tokenData = await TokenAPI.getTokenPrices();
+    // setLoading(true);
+    // try {
+    //   const tokenData = await TokenAPI.getTokenPrices();
 
-      if (address) {
-        try {
-          const url = `${import.meta.env.VITE_SWAP_SERVER_URL}/allTokens`;
-          const params = new URLSearchParams({ address });
-          const balanceResponse = await axios.get(url, { params });
-          if (balanceResponse.data.status !== false) {
-            const balances: WalletBalance[] = balanceResponse.data.data;
+    //   if (address) {
+    //     try {
+    //       const url = `${import.meta.env.VITE_SWAP_SERVER_URL}/allTokens`;
+    //       const params = new URLSearchParams({ address });
+    //       const balanceResponse = await axios.get(url, { params });
+    //       if (balanceResponse.data.status !== false) {
+    //         const balances: WalletBalance[] = balanceResponse.data.data;
 
-            // Gộp balance của các token trùng coinType
-            const mergedBalances = balances.reduce(
-              (
-                acc: {
-                  coinType: string;
-                  balance: number;
-                  symbol: string;
-                }[],
-                curr
-              ) => {
-                const existingToken = acc.find(
-                  (t) => t.coinType === curr.coinType
-                );
-                if (existingToken) {
-                  // Cộng dồn balance nếu token đã tồn tại
-                  existingToken.balance += Number(curr.balance);
-                } else {
-                  // Thêm token mới vào mảng kết quả
-                  acc.push({
-                    coinType: curr.coinType,
-                    balance: Number(curr.balance),
-                    symbol: curr.symbol,
-                  });
-                }
-                return acc;
-              },
-              []
-            );
+    //         // Gộp balance của các token trùng coinType
+    //         const mergedBalances = balances.reduce(
+    //           (
+    //             acc: {
+    //               coinType: string;
+    //               balance: number;
+    //               symbol: string;
+    //             }[],
+    //             curr
+    //           ) => {
+    //             const existingToken = acc.find(
+    //               (t) => t.coinType === curr.coinType
+    //             );
+    //             if (existingToken) {
+    //               // Cộng dồn balance nếu token đã tồn tại
+    //               existingToken.balance += Number(curr.balance);
+    //             } else {
+    //               // Thêm token mới vào mảng kết quả
+    //               acc.push({
+    //                 coinType: curr.coinType,
+    //                 balance: Number(curr.balance),
+    //                 symbol: curr.symbol,
+    //               });
+    //             }
+    //             return acc;
+    //           },
+    //           []
+    //         );
 
-            // Map balance đã được gộp vào danh sách token
-            const tokensWithBalance = tokenData.map((token) => {
-              const tokenBalance = mergedBalances.find(
-                (b) => b.coinType === token.coin_type
-              );
-              return {
-                ...token,
-                balance: tokenBalance ? tokenBalance.balance.toString() : "0",
-              };
-            });
-            console.log("PHAP", tokensWithBalance);
+    //         // Map balance đã được gộp vào danh sách token
+    //         const tokensWithBalance = tokenData.map((token) => {
+    //           const tokenBalance = mergedBalances.find(
+    //             (b) => b.coinType === token.coin_type
+    //           );
+    //           return {
+    //             ...token,
+    //             balance: tokenBalance ? tokenBalance.balance.toString() : "0",
+    //           };
+    //         });
+    //         console.log("PHAP", tokensWithBalance);
 
-            setTokens(tokensWithBalance);
-          } else {
-            setTokens(tokenData);
-          }
-        } catch (error) {
-          console.error("Error fetching balances:", error);
-          setTokens(tokenData);
-        }
-      } else {
-        setTokens(tokenData);
-      }
-    } catch (error) {
-      console.error("Error loading tokens:", error);
-    } finally {
-      setLoading(false);
-    }
+    //         setTokens(tokensWithBalance);
+    //       } else {
+    //         setTokens(tokenData);
+    //       }
+    //     } catch (error) {
+    //       console.error("Error fetching balances:", error);
+    //       setTokens(tokenData);
+    //     }
+    //   } else {
+    //     setTokens(tokenData);
+    //   }
+    // } catch (error) {
+    //   console.error("Error loading tokens:", error);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const filteredTokens = tokens.filter((token) => {
