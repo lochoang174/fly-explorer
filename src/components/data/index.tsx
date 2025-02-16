@@ -83,7 +83,7 @@ function DataCard(props: DataCardProps) {
             </div>
           </div>
           <a
-          // href storage
+            // href storage
             target="_blank"
           >
             <span className="text-[#0057FF] max-w-[200px] text-[14px] underline font-[500] mt-[-8px] block cursor-pointer truncate overflow-hidden text-ellipsis">
@@ -139,14 +139,13 @@ export default function Data({ className }: DataProps) {
   const _className =
     "flex flex-col h-screen max-h-[calc(100dvh-45px-16px)] border-s";
 
-  // React.useEffect(() => {
-  //   if (account?.address)
-  //     KnowledgeAPI.getKnowledge(account?.address).then((list) =>
-  //       setListKnowledge(list)
-  //     );
-  // }, [account?.address]);
+  React.useEffect(() => {
+    KnowledgeAPI.getKnowledge("").then((list) => {
+      console.log(list);
+      setListKnowledge(list);
+    });
+  }, []);
 
-  [[], []];
   return (
     <div className={cn(_className, className)}>
       <div className="px-3 py-2 border-b">

@@ -39,7 +39,7 @@ async function getFolderByUserAddress(userAddress: string) {
   const folder = await checkUserFolder(userAddress);
   console.log(folder);
   const response = await fetch(
-    `${tuskyURL}/files?vaultId=${defaultVaultId}&parentId=${folder.id}`,
+    `${tuskyURL}/files?vaultId=${defaultVaultId}&parentId=${defaultParentId}`,
     {
       method: "GET",
       headers: {
