@@ -99,7 +99,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="bg-blue">
         <WalletInformationBox />
       </SidebarFooter>
     </Sidebar>

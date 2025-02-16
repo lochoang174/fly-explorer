@@ -20,7 +20,7 @@ import { ConversationUIUtils } from "./utils";
 import type { DialogType } from "src/objects/conversation/types";
 import type { ConversationControllerProps } from "./types";
 
-const inputPlaceHolder = "Start conversation with flyfish...";
+const inputPlaceHolder = "Start conversation with Fly Explorer...";
 
 // export default function ConversationController(
 //   props: ConversationControllerProps
@@ -393,7 +393,16 @@ export default function ConversationController() {
       // Send request
       ConversationAPI.askBot(userDialog.text, conversation.agentId).then(
         (data) => {
-          if (!data) return;
+          if (!data) {
+            const aiDialog = ConversationUtils.createDialog(
+              "I'm sorry, I'm not able to process your request. Please try again.",
+              ConversationConstants.Senders.AI
+            );
+
+            _updateAIResponse([aiDialog]);
+            setConversationResponseStatus("WAITING");
+            return;
+          }
 
           // Frontend gets response from AI, there are many steps to do:
           // 1. Create dialog for AI (shouldn't replace).

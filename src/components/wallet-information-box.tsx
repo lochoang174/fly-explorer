@@ -1,4 +1,5 @@
 // import { useState } from "react";
+import { useWallet } from "@razorlabs/razorkit";
 import ConnectWallet from "./ui/connect-wallet";
 import { ChevronsUpDown, LogOut, Users } from "lucide-react";
 
@@ -17,6 +18,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "src/components/ui/sidebar";
+import { WalletUtils } from "src/utils/wallet";
 
 // Import hooks
 // import { useAuth } from "src/hooks/use-auth";
@@ -25,11 +27,10 @@ import {
 // import { UserUtils } from "src/objects/user/utils";
 
 // Import utils
-import { WalletUtils } from "src/utils/wallet";
 
 export default function WalletInformationBox() {
   // Get access to the wallet
-  // const { address, setAddress } = useState<string | "">("0x23523525524....235235");
+  const {disconnect, address, chain} = useWallet();
   const isConnected = false
   return (
     <SidebarMenu>
@@ -38,10 +39,10 @@ export default function WalletInformationBox() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent"
             >
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
+                <span className="truncate font-semibold bg-blue text-black">
                   <ConnectWallet />
                 </span>
               </div>
@@ -62,8 +63,8 @@ export default function WalletInformationBox() {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      // thông tin account
+                    <span className="truncate font-semibold text-center">
+                      {address && WalletUtils.censorAddress(address, 10, 10)}
                     </span>
                   </div>
                 </div>
@@ -75,7 +76,7 @@ export default function WalletInformationBox() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500 cursor-pointer"
-                onClick={() =>console.log("disconnected")}
+                onClick={() => disconnect()}
               >
                 <LogOut className="mr-2 size-4" />
                 Sign out

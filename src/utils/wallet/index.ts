@@ -1,4 +1,3 @@
-import { fromBase64 } from "@mysten/bcs";
 
 /**
  * Use to round a `num` to `dec` th decimal.
@@ -31,7 +30,7 @@ function splitTokenByBalance(balance: number) {
  * @returns
  */
 function createTransactionFromTxBytes(txBytes: string) {
-  const txb = fromBase64(txBytes);
+  // const txb = fromBase64(txBytes);
   // const txn = Transaction.from(txb);
 // change here
   return "txn";
