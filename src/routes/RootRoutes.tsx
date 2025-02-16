@@ -23,6 +23,7 @@ import HomePage from "src/pages/home";
 
 // Import types
 import type { RouteObject } from "react-router-dom";
+import GraphPage from "src/pages/graph";
 
 export const AuthenticatedRoutesMetadata = new Map([
   ["/", import.meta.env.VITE_APP_NAME],
@@ -66,6 +67,10 @@ const rootRoutes: Array<RouteObject> = [
       {
         path: "/conversation",
         element: <HomePage />,
+      },
+      {
+        path: "/graph",
+        element: <GraphPage />,
       },
       {
         path: "/",

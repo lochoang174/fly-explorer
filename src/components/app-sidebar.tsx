@@ -6,7 +6,8 @@ import {
   Twitter,
   MessageSquareShare,
   Youtube,
-  QrCode 
+  QrCode, 
+  ChartNetwork
 } from "lucide-react";
 // Import components
 import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
@@ -31,7 +32,11 @@ const items = [
     icon: MessageCircle,
     label: "Conversation",
   },
-  
+  {
+    url: "/graph",
+    icon: ChartNetwork ,
+    label: "Graph",
+  },
 ];
 
 const sideBarClassName = cn([
@@ -64,7 +69,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items
-                .filter((item) => item.label === "Conversation")
+                .filter((item) => item.label === "Conversation" ||item.label === "Graph")
                 .map((item) => (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild>
@@ -84,7 +89,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items
-                .filter((item) => item.label !== "Conversation")
+                .filter((item) => item.label !== "Conversation" && item.label !== "Graph")
                 .map((item) => (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild>
