@@ -8,7 +8,7 @@ const tuskyAPIKey = import.meta.env.VITE_TUSKY_API_KEY;
 const defaultVaultId = import.meta.env.VITE_DEFAULT_VAULT_ID;
 const defaultParentId = import.meta.env.VITE_DEFAULT_PARENT_ID;
 
-console.log(tuskyURL, tuskyAPIKey, defaultVaultId, defaultParentId);
+console.log("tusky",tuskyURL, tuskyAPIKey, defaultVaultId, defaultParentId);
 //to check that user have been created a folder and create if not
 async function checkUserFolder(folderName: string) {
   if (!tuskyURL || !tuskyAPIKey)
@@ -39,7 +39,7 @@ async function getFolderByUserAddress(userAddress: string) {
   const folder = await checkUserFolder(userAddress);
   console.log(folder);
   const response = await fetch(
-    `${tuskyURL}/files?vaultId=${defaultVaultId}&parentId=${folder.id}`,
+    `${tuskyURL}/files?vaultId=${defaultVaultId}&parentId=${defaultParentId}`,
     {
       method: "GET",
       headers: {

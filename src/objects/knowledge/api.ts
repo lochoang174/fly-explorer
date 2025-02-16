@@ -47,4 +47,29 @@ export class KnowledgeAPI {
       console.error(error.message);
     }
   }
+
+  //to check that user have been created a folder and create if not
+  static async checkUserFolder(folderName: string) {
+    if (!import.meta.env.VITE_TUSKY_URL || !import.meta.env.VITE_TUSKY_API_KEY) {
+      throw new Error("TUS_API_URL or TUSKY_API_KEY is not set");
+    }
+    const folders = await fetch(
+        `${import.meta.env.VITE_TUSKY_URL}/folders?vaultId=${import.meta.env.VITE_DEFAULT_VAULT}&parentId=${import.meta.env.VITE_DEFAULT_PARENT_ID}`,
+        {
+            method: 'GET',
+            headers: {
+                'Api-key': import.meta.env.VITE_TUSKY_API_KEY,
+            },
+        },
+    ).then((response) => response.json())
+    console.log("tusky",folders)
+
+    const folder = folders.items.find((folder: any) => folder.name == folderName)
+
+    if (folder) {
+        return folder
+    } else {
+        return createFolder(folderName)
+    }
+}
 }

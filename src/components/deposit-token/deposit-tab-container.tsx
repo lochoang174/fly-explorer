@@ -9,11 +9,8 @@ import ConnectWallet from "../ui/connect-wallet";
 // Import objects
 // import { TokenAPI } from "src/objects/token/api";
 
-// Import utils
-import { WalletUtils } from "src/utils/wallet";
 
 // Import types
-import { TokenData } from "src/types/token";
 import { useConversationState } from "src/states/conversation";
 
 type DepositeTabContainerProps = {

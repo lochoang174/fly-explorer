@@ -1,7 +1,11 @@
 const TUS_API_URL = 'https://api.tusky.io'
-const TUS_API_KEY = '0eccf2a3-0be1-471e-a6d2-ab24da6678a3'
-const DEFAULT_VAULT = '2ad303cc-ac28-404b-9b30-fb742e3b036f'
-const DEFAULT_PARENT_ID = '0bdab373-a341-4072-ba8e-169c0cac3f53'
+// const TUS_API_KEY = '0eccf2a3-0be1-471e-a6d2-ab24da6678a3'
+// const DEFAULT_VAULT = '2ad303cc-ac28-404b-9b30-fb742e3b036f'
+// const DEFAULT_PARENT_ID = '0bdab373-a341-4072-ba8e-169c0cac3f53'
+
+const TUS_API_KEY = import.meta.env.VITE_TUSKY_API_KEY
+const DEFAULT_VAULT = import.meta.env.VITE_DEFAULT_VAULT
+const DEFAULT_PARENT_ID = import.meta.env.VITE_DEFAULT_PARENT_ID
 
 function generateRandomString(length: number): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -47,7 +51,11 @@ export async function getFolderByUserAddressTmp(userAddress: string) {
         'Api-Key': TUS_API_KEY,
       },
     }).then((response) => response.json())
+<<<<<<< HEAD
     console.log(response)
+=======
+    console.log("tusky",response)
+>>>>>>> f4f41307299d5e66eb680e119df6c2a17b0f4120
 
     const data = await Promise.all(
       response.items.map(async (item: any) => {

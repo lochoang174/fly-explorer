@@ -78,7 +78,7 @@ const rootRoutes: Array<RouteObject> = [
       },
       {
         path: "*",
-        element: <Navigate to="/conversation" replace />,
+        element: <Navigate to="/conversation" />,
       }
     ],
   },

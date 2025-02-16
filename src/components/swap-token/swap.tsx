@@ -9,10 +9,10 @@ import ConnectWallet from "src/components/ui/connect-wallet";
 // import { TokenAPI } from "src/objects/token/api";
 
 // Import utils
-import { WalletUtils } from "src/utils/wallet";
 
 // Import types
 import type { TokenData } from "../../types/token";
+import { WalletUtils } from "src/utils/wallet";
 
 export default function Swap() {
 
