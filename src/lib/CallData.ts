@@ -51,11 +51,7 @@ export async function getFolderByUserAddressTmp(userAddress: string) {
         'Api-Key': TUS_API_KEY,
       },
     }).then((response) => response.json())
-<<<<<<< HEAD
-    console.log(response)
-=======
     console.log("tusky",response)
->>>>>>> f4f41307299d5e66eb680e119df6c2a17b0f4120
 
     const data = await Promise.all(
       response.items.map(async (item: any) => {
