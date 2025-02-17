@@ -1,7 +1,17 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { GraphCanvas, GraphNode, InternalGraphNode } from "reagraph";
 import { getFolderByUserAddress } from "src/lib/CallData";
+import { ConversationAPI } from "src/objects/conversation/api";
 interface NodeType extends GraphNode {
+  id: string;
+  label: string; 
+  content?: string;
+  nodeType?: 'parent' | 'post';
+  posts?: Array<{
+    id: string | number;
+    content: string;
+  }>;
   blobId: string | null;
   certifiedEpoch?: number | null;
   chunkSize?: number | null;
@@ -32,6 +42,16 @@ interface EdgeType {
   label: string;
 }
 
+// Định nghĩa interface cho data từ API
+interface ApiItem {
+  parentId: string;
+  content: string;
+  posts: Array<{
+    id: number | string;
+    content: string;
+  }>;
+}
+
 export default function GraphPage() {
   const [selectedNode, setSelectedNode] = useState<NodeType | null>(null);
   const [nodes, setNodes] = useState<NodeType[]>([]);
@@ -49,51 +69,92 @@ export default function GraphPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await getFolderByUserAddress(
-        "0xb4b291607e91da4654cab88e5e35ba2921ef68f1b43725ef2faeae045bf5915d"
-      );
-      console.log(res);
+      const url = `${import.meta.env.VITE_API_SERVER_URL}/data`;
+      const response = await axios.get(url);
+      
+      if (!response.data) return;
 
-      if (!res || res.length === 0) return;
+      const res: ApiItem[] = response.data;
+      
+      // Tạo nodes từ data
+      const fetchedNodes: NodeType[] = [];
+      
+      // Tạo nodes cho categories (DEFI, Other)
+      const categories = [...new Set(res.map(item => item.parentId))];
+      categories.forEach(category => {
+        fetchedNodes.push({
+          id: category,
+          label: category,
+          nodeType: 'parent',
+          content: res.find(item => item.parentId === category)?.content || '',
+          blobId: null,
+          data: null,
+          encryptedAesKey: null,
+          erasureCodeType: null,
+          expiresAt: null,
+          mimeType: null,
+          name: null,
+          numberOfChunks: null,
+          owner: null,
+          parentId: null,
+          partition: null,
+          ref: null,
+          sizeBlob: null,
+          status: null,
+          storedEpoch: null,
+          updatedAt: null,
+          uploadId: null,
+          vaultId: null
+        });
+      });
 
-      // Tạo nodes từ dữ liệu API
-      const fetchedNodes: NodeType[] = res.map((item: any) => ({
-        id: item.id,
-        label: item.name || "Unnamed File",
-        blobId: item.blobId ?? null,
-        certifiedEpoch: item.certifiedEpoch ?? null,
-        chunkSize: item.chunkSize ?? null,
-        createdAt: item.createdAt ?? null,
-        encryptedAesKey: item.encryptedAesKey ?? null,
-        erasureCodeType: item.erasureCodeType ?? null,
-        expiresAt: item.expiresAt ?? null,
-        mimeType: item.mimeType ?? null,
-        numberOfChunks: item.numberOfChunks ?? null,
-        owner: item.owner ?? null,
-        parentId: item.parentId ?? null,
-        partition: item.partition ?? null,
-        ref: item.ref ?? null,
-        sizeBlob: item.size ?? null,
-        status: item.status ?? null,
-        storedEpoch: item.storedEpoch ?? null,
-        updatedAt: item.updatedAt ?? null,
-        uploadId: item.uploadId ?? null,
-        vaultId: item.vaultId ?? null,
-      }));
+      // Tạo nodes cho posts
+      res.forEach(item => {
+        item.posts.forEach(post => {
+          fetchedNodes.push({
+            id: `post-${post.id}`,
+            label: post.content,
+            content: post.content,
+            nodeType: 'post',
+            blobId: null,
+            data: null,
+            encryptedAesKey: null,
+            erasureCodeType: null,
+            expiresAt: null,
+            mimeType: null,
+            name: null,
+            numberOfChunks: null,
+            owner: null,
+            parentId: item.parentId,
+            partition: null,
+            ref: null,
+            sizeBlob: null,
+            status: null,
+            storedEpoch: null,
+            updatedAt: null,
+            uploadId: null,
+            vaultId: null
+          });
+        });
+      });
 
-      // Tạo edges từ dữ liệu API (nếu có quan hệ parent-child)
-      const fetchedEdges: EdgeType[] = res
-        .filter((item: any) => item.parentId)
-        .map((item: any) => ({
-          id: `${item.parentId}->${item.id}`,
-          source: item.id,
-          target: "1a8c7573-5ab4-4096-9e28-65ffac188a38",
-          label: "",
-        }));
+      // Tạo edges trực tiếp từ parentId đến posts
+      const fetchedEdges: EdgeType[] = [];
+      
+      res.forEach(item => {
+        item.posts.forEach(post => {
+          fetchedEdges.push({
+            id: `edge-${fetchedEdges.length}`,
+            source: item.parentId,
+            target: `post-${post.id}`,
+            label: "has_post"
+          });
+        });
+      });
 
-      // Đặt dữ liệu vào state
       setNodes(fetchedNodes);
       setEdges(fetchedEdges);
+      
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -102,7 +163,28 @@ export default function GraphPage() {
   };
 
   const handleNodeClick = (node: InternalGraphNode) => {
-    setSelectedNode(node);
+    const selectedNodeData: NodeType = {
+      ...node,
+      blobId: null,
+      data: null,
+      encryptedAesKey: null,
+      erasureCodeType: null,
+      expiresAt: null,
+      mimeType: null,
+      name: null,
+      numberOfChunks: null,
+      owner: null,
+      parentId: null,
+      partition: null,
+      ref: null,
+      sizeBlob: null,
+      status: null,
+      storedEpoch: null,
+      updatedAt: null,
+      uploadId: null,
+      vaultId: null
+    };
+    setSelectedNode(selectedNodeData);
   };
 
   return (
@@ -126,130 +208,37 @@ export default function GraphPage() {
       <div className="flex-1 border rounded-lg shadow-sm p-4 z-10 overflow-y-scroll">
         {selectedNode ? (
           <div>
-            <h2 className="text-xl font-bold mb-4">Node: {selectedNode.id}</h2>
+            <h2 className="text-xl font-bold mb-4">
+              {selectedNode.nodeType === 'parent' ? 'Category' : 'Post'}: {selectedNode.label}
+            </h2>
 
-            {/* Manually List All Fields */}
-            <div className="space-y-4 p-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-              {/* Grid Layout cho các field */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Basic Information Group */}
-                <div className="md:col-span-2 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                    Basic Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InfoField label="Name" value={selectedNode.label} />
-                    <InfoField label="Blob ID" value={selectedNode.blobId} />
-                    <InfoField label="Owner" value={selectedNode.owner} />
-                    <InfoField label="Status" value={selectedNode.status} />
-                  </div>
+            {selectedNode.nodeType === 'parent' ? (
+              <div className="space-y-4">
+                <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Content</h3>
+                  <p className="text-gray-700 whitespace-pre-wrap">{selectedNode.content}</p>
                 </div>
 
-                {/* Technical Details Group */}
-                <div className="md:col-span-2 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                    Technical Details
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InfoField
-                      label="Mime Type"
-                      value={selectedNode.mimeType}
-                    />
-                    <InfoField
-                      label="Chunk Size"
-                      value={selectedNode.chunkSize}
-                    />
-                    <InfoField
-                      label="Number of Chunks"
-                      value={selectedNode.numberOfChunks}
-                    />
-                    <InfoField
-                      label="Size (Blob)"
-                      value={selectedNode.sizeBlob}
-                    />
-                    <InfoField
-                      label="Erasure Code Type"
-                      value={selectedNode.erasureCodeType}
-                    />
-                    <InfoField
-                      label="Encrypted AES Key"
-                      value={selectedNode.encryptedAesKey}
-                    />
-                  </div>
-                </div>
-
-                <div className="md:col-span-2 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                    Timestamps
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InfoField
-                      label="Created At"
-                      value={selectedNode.createdAt}
-                      isTimestamp={true}
-                    />
-                    <InfoField
-                      label="Updated At"
-                      value={selectedNode.updatedAt}
-                      isTimestamp={true}
-                    />
-                    <InfoField
-                      label="Expires At"
-                      value={selectedNode.expiresAt}
-                      isTimestamp={true}
-                    />
-                  </div>
-                </div>
-
-                {/* System Information Group */}
-                <div className="md:col-span-2 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                    System Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InfoField
-                      label="Partition"
-                      value={selectedNode.partition}
-                    />
-                    <InfoField label="Vault ID" value={selectedNode.vaultId} />
-                    <InfoField
-                      label="Upload ID"
-                      value={selectedNode.uploadId}
-                    />
-                    <InfoField
-                      label="Parent ID"
-                      value={selectedNode.parentId}
-                    />
-                    <InfoField label="Ref" value={selectedNode.ref} />
-                  </div>
-                </div>
-
-                {/* Epoch Information Group */}
-                <div className="md:col-span-2 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                    Epoch Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InfoField
-                      label="Certified Epoch"
-                      value={selectedNode.certifiedEpoch}
-                    />
-                    <InfoField
-                      label="Stored Epoch"
-                      value={selectedNode.storedEpoch}
-                    />
+                <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Related Posts</h3>
+                  <div className="space-y-2">
+                    {nodes
+                      .filter(node => node.parentId === selectedNode.id)
+                      .map(post => (
+                        <div key={post.id} className="p-3 bg-gray-50 rounded-lg">
+                          <p className="text-gray-700">{post.content}</p>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
-            </div>
-            {/* <div className="mt-4">
-              <button
-                className="text-sm text-blue-500 hover:text-blue-700"
-                onClick={() => setSelectedNode(null)}
-              >
-                Clear Selection
-              </button>
-            </div> */}
+            ) : (
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">Post Content</h3>
+                <p className="text-gray-700 whitespace-pre-wrap">{selectedNode.content}</p>
+                <p className="text-sm text-gray-500 mt-2">Parent: {selectedNode.parentId}</p>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center text-gray-500">
@@ -290,9 +279,6 @@ const InfoField: React.FC<InfoFieldProps> = ({ label, value, isTimestamp }) => {
     </div>
   );
 };
-
-
-
 
 const formatTimestamp = (timestamp: number | string | undefined): string => {
     if (!timestamp) return 'Not available';

@@ -4,8 +4,10 @@ const TUS_API_URL = 'https://api.tusky.io'
 // const DEFAULT_PARENT_ID = '0bdab373-a341-4072-ba8e-169c0cac3f53'
 
 const TUS_API_KEY = import.meta.env.VITE_TUSKY_API_KEY
-const DEFAULT_VAULT = import.meta.env.VITE_DEFAULT_VAULT
+const DEFAULT_VAULT = import.meta.env.VITE_DEFAULT_VAULT_ID
+console.log("DEFAULT_VAULT", DEFAULT_VAULT)
 const DEFAULT_PARENT_ID = import.meta.env.VITE_DEFAULT_PARENT_ID
+console.log("DEFAULT_PARENT_ID", DEFAULT_PARENT_ID)
 
 function generateRandomString(length: number): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -23,7 +25,7 @@ export async function checkUserFolder(folderName: string) {
         throw new Error('TUS_API_URL or TUSKY_API_KEY is not set')
     }
     const folders = await fetch(
-        `${TUS_API_URL}/folders?vaultId=${DEFAULT_VAULT}&parentId=${DEFAULT_PARENT_ID}`,
+        `${TUS_API_URL}/folders?vaultId=${DEFAULT_VAULT}&parentId=45c6c728-6e0d-4260-8c2e-1bb25d285874`,
         {
             method: 'GET',
             headers: {
