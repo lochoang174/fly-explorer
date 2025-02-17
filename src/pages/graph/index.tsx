@@ -76,17 +76,17 @@ export default function GraphPage() {
 
       const res: ApiItem[] = response.data;
       
-      // Tạo nodes từ data
       const fetchedNodes: NodeType[] = [];
       
-      // Tạo nodes cho categories (DEFI, Other)
+      // Tạo nodes cho categories với label là parentId
       const categories = [...new Set(res.map(item => item.parentId))];
       categories.forEach(category => {
+        const categoryContent = res.find(item => item.parentId === category)?.content || '';
         fetchedNodes.push({
           id: category,
-          label: category,
+          label: category, // ParentId làm label
           nodeType: 'parent',
-          content: res.find(item => item.parentId === category)?.content || '',
+          content: categoryContent,
           blobId: null,
           data: null,
           encryptedAesKey: null,
@@ -108,16 +108,17 @@ export default function GraphPage() {
         });
       });
 
-      // Tạo nodes cho posts
+      // Tạo nodes cho posts với id trong content
       res.forEach(item => {
         item.posts.forEach(post => {
           fetchedNodes.push({
             id: `post-${post.id}`,
-            label: post.content,
+            label: `#${post.id}: ${post.content.substring(0, 30)}...`, // Thêm id vào label
             content: post.content,
             nodeType: 'post',
             blobId: null,
             data: null,
+            parentId: item.parentId,
             encryptedAesKey: null,
             erasureCodeType: null,
             expiresAt: null,
@@ -125,7 +126,6 @@ export default function GraphPage() {
             name: null,
             numberOfChunks: null,
             owner: null,
-            parentId: item.parentId,
             partition: null,
             ref: null,
             sizeBlob: null,
@@ -209,13 +209,17 @@ export default function GraphPage() {
         {selectedNode ? (
           <div>
             <h2 className="text-xl font-bold mb-4">
-              {selectedNode.nodeType === 'parent' ? 'Category' : 'Post'}: {selectedNode.label}
+              {selectedNode.nodeType === 'parent' ? (
+                <>Category: {selectedNode.label}</>
+              ) : (
+                <>Post {selectedNode.id.replace('post-', '#')}</>
+              )}
             </h2>
 
             {selectedNode.nodeType === 'parent' ? (
               <div className="space-y-4">
                 <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Content</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Category Content</h3>
                   <p className="text-gray-700 whitespace-pre-wrap">{selectedNode.content}</p>
                 </div>
 
@@ -226,6 +230,11 @@ export default function GraphPage() {
                       .filter(node => node.parentId === selectedNode.id)
                       .map(post => (
                         <div key={post.id} className="p-3 bg-gray-50 rounded-lg">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="text-sm font-medium text-gray-500">
+                              {post.id.replace('post-', '#')}
+                            </span>
+                          </div>
                           <p className="text-gray-700">{post.content}</p>
                         </div>
                       ))}
@@ -234,9 +243,12 @@ export default function GraphPage() {
               </div>
             ) : (
               <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+                <div className="mb-4">
+                  <span className="text-sm font-medium text-gray-500">Parent Category:</span>
+                  <span className="ml-2 text-gray-700">{selectedNode.parentId}</span>
+                </div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-3">Post Content</h3>
                 <p className="text-gray-700 whitespace-pre-wrap">{selectedNode.content}</p>
-                <p className="text-sm text-gray-500 mt-2">Parent: {selectedNode.parentId}</p>
               </div>
             )}
           </div>
