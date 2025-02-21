@@ -28,12 +28,12 @@ import WalletInformationBox from "./wallet-information-box";
 // Menu items.
 const items = [
   {
-    url: "/conversation",
+    url: "/app/conversation",
     icon: MessageCircle,
     label: "Conversation",
   },
   {
-    url: "/graph",
+    url: "/app/graph",
     icon: ChartNetwork ,
     label: "Graph",
   },

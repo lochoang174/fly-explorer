@@ -1,7 +1,5 @@
 import React from "react";
 import cn from "classnames";
-import { Link } from "react-router-dom";
-import { Sparkle } from "lucide-react";
 
 // Import components
 import { ScrollArea } from "../ui/scroll-area";
@@ -19,6 +17,18 @@ import type {
   KnowledgeType,
   KnowledgeCategoryType,
 } from "src/objects/knowledge/types";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
+import { Button } from "src/components/ui/button";
+import { Sparkle } from "lucide-react";
 
 type DataCategoryProps = {
   data: KnowledgeCategoryType;
@@ -147,30 +157,40 @@ export default function Data({ className }: DataProps) {
   }, []);
 
   return (
-    <div className={cn(_className, className)}>
-      <div className="px-3 py-2 border-b">
-        <div className="flex items-center">
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">Data Crawl</Button>
+      </SheetTrigger>
+      <SheetContent className="">
+        <div className="flex items-center gap-1 pb-2 border-b mb-2">
           <Sparkle className="me-2" />
           <h3 className="font-bold text-2xl">Crawl Result</h3>
+          <SheetClose asChild className="ms-auto">
+            <Button variant="outline">Close</Button>
+          </SheetClose>
         </div>
-        <p>Stores data on the fly</p>
-      </div>
-      {list.length === 0 ? (
-        <div className="w-full h-fit flex flex-col items-center px-2 py-3 border rounded-lg">
-          <h3 className="text-2xl font-bold mb-1">Opps!!</h3>
-          <p>An empty list, you should crawl data first!</p>
-        </div>
-      ) : (
-        <ScrollArea className="w-full [&>div[data-radix-scroll-area-viewport]]:max-h-[calc(100dvh-45px-16px-56px-12px)] px-3">
-          <div className="px-3 mt-2">
-            {list.map((knowledgeList, index) =>
-              knowledgeList.map((knowledge, id) => (
-                <DataCard key={index * 10 + id} data={knowledge} />
-              ))
-            )}
+        {list.length === 0 ? (
+          <div className="w-full h-fit flex flex-col items-center px-2 py-3 border rounded-lg">
+            <h3 className="text-2xl font-bold mb-1">Opps!!</h3>
+            <p>An empty list, you should crawl data first!</p>
           </div>
-        </ScrollArea>
-      )}
-    </div>
+        ) : (
+          <ScrollArea className="w-full [&>div[data-radix-scroll-area-viewport]]:max-h-[calc(100dvh-45px-16px-56px-12px)] px-3">
+            <div className="px-3 mt-2">
+              {list.map((knowledgeList, index) =>
+                knowledgeList.map((knowledge, id) => (
+                  <DataCard key={index * 10 + id} data={knowledge} />
+                ))
+              )}
+            </div>
+          </ScrollArea>
+        )}
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button variant="outline" className="p-4 shadow-lg">Extension crawler</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
