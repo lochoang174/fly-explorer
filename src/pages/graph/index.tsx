@@ -1,65 +1,59 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { GraphCanvas, GraphNode, InternalGraphNode } from "reagraph";
-import { getFolderByUserAddress } from "src/lib/CallData";
-import { ConversationAPI } from "src/objects/conversation/api";
-interface NodeType extends GraphNode {
+import React, { useEffect, useRef, useState } from "react";
+import { GraphCanvas, GraphCanvasRef, GraphNode, useSelection } from "reagraph";
+
+// Basic node interface that all node types extend from
+interface BaseNode extends GraphNode {
   id: string;
-  label: string; 
+  type: string;
   content?: string;
-  nodeType?: 'parent' | 'post';
-  posts?: Array<{
-    id: string | number;
-    content: string;
-  }>;
-  blobId: string | null;
-  certifiedEpoch?: number | null;
-  chunkSize?: number | null;
-  createdAt?: string | null;
-  data: { msg?: string | null; success?: boolean | null } | null;
-  encryptedAesKey: string | null;
-  erasureCodeType: string | null;
-  expiresAt: string | null;
-  mimeType: string | null;
-  name: string | null;
-  numberOfChunks: number | null;
-  owner: string | null;
-  parentId: string | null;
-  partition: string | null;
-  ref: string | null;
-  sizeBlob: number | null;
-  status: string | null;
-  storedEpoch: number | null;
-  updatedAt: string | null;
-  uploadId: string | null;
-  vaultId: string | null;
+  url?: string;
+  color?: string;
 }
 
+// Edge interface
 interface EdgeType {
   id: string;
   source: string;
   target: string;
-  label: string;
+  label?: string;
 }
 
-// Định nghĩa interface cho data từ API
-interface ApiItem {
-  parentId: string;
-  content: string;
-  posts: Array<{
-    id: number | string;
-    content: string;
-  }>;
+// API response interface
+interface ResponseType {
+  nodes: BaseNode[];
+  edges: EdgeType[];
 }
 
 export default function GraphPage() {
-  const [selectedNode, setSelectedNode] = useState<NodeType | null>(null);
-  const [nodes, setNodes] = useState<NodeType[]>([]);
+  const [selectedNode, setSelectedNode] = useState<BaseNode | null>(null);
+  const [nodes, setNodes] = useState<BaseNode[]>([]);
   const [edges, setEdges] = useState<EdgeType[]>([]);
   const [loading, setLoading] = useState(false);
+  const graphRef = useRef<GraphCanvasRef | null>(null);
+  const {
+    selections,
+    actives,
+    onNodeClick,
+    onCanvasClick,
+    onNodePointerOver,
+    onNodePointerOut,
+  } = useSelection({
+    ref: graphRef,
+    nodes: nodes,
+    edges: edges,
+    pathSelectionType: 'in',
+    pathHoverType: 'in'
+
+  });
   useEffect(() => {
-    console.log("Selected Node:", selectedNode);
-  }, [selectedNode]);
+    console.log("Selected Node:", edges);
+    nodes.map((e) => {
+      if (e.type === "keyword") {
+        console.log(e);
+      }
+    });
+  }, [nodes]);
 
   useEffect(() => {
     console.log("Fetching data...");
@@ -69,92 +63,40 @@ export default function GraphPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const url = `${import.meta.env.VITE_API_SERVER_URL}/data`;
+      const url = `http://3.85.218.160:3000/data`;
       const response = await axios.get(url);
-      
       if (!response.data) return;
 
-      const res: ApiItem[] = response.data;
-      
-      const fetchedNodes: NodeType[] = [];
-      
-      // Tạo nodes cho categories với label là parentId
-      const categories = [...new Set(res.map(item => item.parentId))];
-      categories.forEach(category => {
-        const categoryContent = res.find(item => item.parentId === category)?.content || '';
-        fetchedNodes.push({
-          id: category,
-          label: category, // ParentId làm label
-          nodeType: 'parent',
-          content: categoryContent,
-          blobId: null,
-          data: null,
-          encryptedAesKey: null,
-          erasureCodeType: null,
-          expiresAt: null,
-          mimeType: null,
-          name: null,
-          numberOfChunks: null,
-          owner: null,
-          parentId: null,
-          partition: null,
-          ref: null,
-          sizeBlob: null,
-          status: null,
-          storedEpoch: null,
-          updatedAt: null,
-          uploadId: null,
-          vaultId: null
-        });
-      });
+      const res: ResponseType = response.data;
+      console.log(res.nodes);
 
-      // Tạo nodes cho posts với id trong content
-      res.forEach(item => {
-        item.posts.forEach(post => {
-          fetchedNodes.push({
-            id: `post-${post.id}`,
-            label: `#${post.id}: ${post.content.substring(0, 30)}...`, // Thêm id vào label
-            content: post.content,
-            nodeType: 'post',
-            blobId: null,
-            data: null,
-            parentId: item.parentId,
-            encryptedAesKey: null,
-            erasureCodeType: null,
-            expiresAt: null,
-            mimeType: null,
-            name: null,
-            numberOfChunks: null,
-            owner: null,
-            partition: null,
-            ref: null,
-            sizeBlob: null,
-            status: null,
-            storedEpoch: null,
-            updatedAt: null,
-            uploadId: null,
-            vaultId: null
-          });
-        });
+      // Process nodes and add colors based on type
+      const processedNodes = res.nodes.map((node) => ({
+        ...node,
+        label: node.id,
+        // Set different colors for keyword and post nodes
+        fill: node.type === "keyword" ? "#FF6B6B" : "#4ECDC4",
+        activeFill: "#1DE9AC",
+        opacity: 1,
+        selectedOpacity: 1,
+        inactiveOpacity: 0.2,
+        // You can also use different colors like:
+        // color: node.type === "keyword" ? "#FFD700" : "#4ECDC4", // Gold for keywords
+        // or
+        // color: node.type === "keyword" ? "#9370DB" : "#4ECDC4", // Purple for keywords
+      }));
+      const fetchEdge: EdgeType[] = res.edges.map((item) => {
+        return {
+          ...item,
+          id: `{ ${item.source}-${item.target}}`,
+          activeFill: "#1DE9AC",
+          opacity: 1,
+          selectedOpacity: 1,
+          inactiveOpacity: 0.1,
+        };
       });
-
-      // Tạo edges trực tiếp từ parentId đến posts
-      const fetchedEdges: EdgeType[] = [];
-      
-      res.forEach(item => {
-        item.posts.forEach(post => {
-          fetchedEdges.push({
-            id: `edge-${fetchedEdges.length}`,
-            source: item.parentId,
-            target: `post-${post.id}`,
-            label: "has_post"
-          });
-        });
-      });
-
-      setNodes(fetchedNodes);
-      setEdges(fetchedEdges);
-      
+      setNodes(processedNodes);
+      setEdges(fetchEdge);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -162,29 +104,8 @@ export default function GraphPage() {
     }
   };
 
-  const handleNodeClick = (node: InternalGraphNode) => {
-    const selectedNodeData: NodeType = {
-      ...node,
-      blobId: null,
-      data: null,
-      encryptedAesKey: null,
-      erasureCodeType: null,
-      expiresAt: null,
-      mimeType: null,
-      name: null,
-      numberOfChunks: null,
-      owner: null,
-      parentId: null,
-      partition: null,
-      ref: null,
-      sizeBlob: null,
-      status: null,
-      storedEpoch: null,
-      updatedAt: null,
-      uploadId: null,
-      vaultId: null
-    };
-    setSelectedNode(selectedNodeData);
+  const handleNodeClick = (node: BaseNode) => {
+    setSelectedNode(node);
   };
 
   return (
@@ -194,12 +115,42 @@ export default function GraphPage() {
         {loading ? (
           <span>Loading...</span>
         ) : (
+          // <GraphCanvas
+          //   nodes={nodes}
+          //   edges={edges}
+
+          //   onNodeClick={handleNodeClick}
+          //   labelType="all"
+          //   draggable={true}
+
+          //   // renderNode={({ node, color, size, opacity }) => (
+          //   //   <group>
+          //   //     <mesh>
+          //   //       <torusKnotGeometry attach="geometry" args={[size, 1.25, 50, 8]} />
+          //   //       <meshBasicMaterial
+          //   //         attach="material"
+          //   //         color={node.type === "keyword" ? "#FF6B6B" : "#4ECDC4"}
+          //   //         opacity={opacity}
+          //   //         transparent
+          //   //       />
+          //   //     </mesh>
+          //   //   </group>
+          //   // )}
+          // />
           <GraphCanvas
+            ref={graphRef}
             nodes={nodes}
             edges={edges}
-            onNodeClick={handleNodeClick}
-            labelType="all"
-            draggable={true}
+            selections={selections}
+            actives={actives}
+            onNodePointerOver={onNodePointerOver}
+            onNodePointerOut={onNodePointerOut}
+            onCanvasClick={onCanvasClick}
+            onNodeClick={(node) => {
+              onNodeClick(node); // Gọi sự kiện từ `useSelection`
+              handleNodeClick(node); // Cập nhật state của `selectedNode`
+            }}            
+            cameraMode="pan"
           />
         )}
       </div>
@@ -209,48 +160,109 @@ export default function GraphPage() {
         {selectedNode ? (
           <div>
             <h2 className="text-xl font-bold mb-4">
-              {selectedNode.nodeType === 'parent' ? (
-                <>Category: {selectedNode.label}</>
+              {selectedNode.type === "keyword" ? (
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: "#FF6B6B" }}
+                  />
+                  Keyword: {selectedNode.id}
+                </div>
               ) : (
-                <>Post {selectedNode.id.replace('post-', '#')}</>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: "#4ECDC4" }}
+                  />
+                  Post: {selectedNode.id}
+                </div>
               )}
             </h2>
 
-            {selectedNode.nodeType === 'parent' ? (
-              <div className="space-y-4">
-                <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Category Content</h3>
-                  <p className="text-gray-700 whitespace-pre-wrap">{selectedNode.content}</p>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Related Posts</h3>
+            <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+              {selectedNode.type === "keyword" ? (
+                <>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Related Posts
+                  </h3>
                   <div className="space-y-2">
-                    {nodes
-                      .filter(node => node.parentId === selectedNode.id)
-                      .map(post => (
-                        <div key={post.id} className="p-3 bg-gray-50 rounded-lg">
-                          <div className="flex justify-between items-start mb-2">
-                            <span className="text-sm font-medium text-gray-500">
-                              {post.id.replace('post-', '#')}
+                    {edges
+                      .filter(
+                        (edge) =>
+                          edge.source === selectedNode.id ||
+                          edge.target === selectedNode.id
+                      )
+                      .map((edge) => {
+                        const relatedPost = nodes.find(
+                          (node) =>
+                            node.type === "post" &&
+                            (node.id === edge.source || node.id === edge.target)
+                        );
+                        if (!relatedPost) return null;
+
+                        return (
+                          <div
+                            key={relatedPost.id}
+                            className="p-3 bg-gray-50 rounded-lg"
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <span className="text-sm font-medium text-gray-500">
+                                {relatedPost.id}
+                              </span>
+                            </div>
+                            <p className="text-gray-700">
+                              {relatedPost.content}
+                            </p>
+                            <span>
+                            Url: <a href={relatedPost.url} target="_blank" rel="noopener noreferrer" className="text-blue-600">{relatedPost.url}</a>
+
                             </span>
                           </div>
-                          <p className="text-gray-700">{post.content}</p>
-                        </div>
-                      ))}
+                        );
+                      })}
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                <div className="mb-4">
-                  <span className="text-sm font-medium text-gray-500">Parent Category:</span>
-                  <span className="ml-2 text-gray-700">{selectedNode.parentId}</span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Post Content</h3>
-                <p className="text-gray-700 whitespace-pre-wrap">{selectedNode.content}</p>
-              </div>
-            )}
+                </>
+              ) : (
+                <>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    Post Content
+                  </h3>
+                  <p className="text-gray-700 whitespace-pre-wrap">
+                    {selectedNode.content}
+                  </p>
+
+                  <h3 className="text-lg font-semibold text-gray-800 mt-4 mb-3">
+                    Related Keywords
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {edges
+                      .filter(
+                        (edge) =>
+                          edge.source === selectedNode.id ||
+                          edge.target === selectedNode.id
+                      )
+                      .map((edge) => {
+                        const keyword = nodes.find(
+                          (node) =>
+                            node.type === "keyword" &&
+                            (node.id === edge.source || node.id === edge.target)
+                        );
+                        if (!keyword) return null;
+
+                        return (
+                          <span
+                            key={keyword.id}
+                            className="px-3 py-1 rounded-full text-sm text-white"
+                            style={{ backgroundColor: "#FF6B6B" }}
+                          >
+                            {keyword.id}
+                          </span>
+                        );
+                      })}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         ) : (
           <div className="text-center text-gray-500">
@@ -262,50 +274,3 @@ export default function GraphPage() {
     </div>
   );
 }
-interface InfoFieldProps {
-  label: string;
-  value: string | number | undefined;
-  isTimestamp?: boolean;
-}
-
-const InfoField: React.FC<InfoFieldProps> = ({ label, value, isTimestamp }) => {
-  const displayValue = isTimestamp ? formatTimestamp(value) : value;
-
-  return (
-    <div className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors duration-200">
-      <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
-      <p className="text-gray-800 break-all">
-        {isTimestamp ? (
-          <span className="flex flex-col">
-            <span className="text-base">{displayValue}</span>
-            <span className="text-xs text-gray-500 mt-1">
-              Timestamp: {value}
-            </span>
-          </span>
-        ) : (
-          displayValue || (
-            <span className="text-gray-400 italic">Not available</span>
-          )
-        )}
-      </p>
-    </div>
-  );
-};
-
-const formatTimestamp = (timestamp: number | string | undefined): string => {
-    if (!timestamp) return 'Not available';
-    
-    const date = new Date(Number(timestamp));
-    
-    // Format: "Feb 14, 2024, 10:30 AM (GMT+7)"
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZoneName: 'shortOffset'
-    }).format(date);
-  };
-  
