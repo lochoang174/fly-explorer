@@ -5,9 +5,7 @@ import cn from "classnames";
 import RecommendationsBox from "./recommendation-box";
 import ConversationDialogs from "./conversation-dialogs";
 import ConversationController from "./conversation-controller";
-
 // Import objects
-import { AtomaAPI } from "src/objects/atoma/api";
 import { ConversationAPI } from "src/objects/conversation/api";
 
 // Import state

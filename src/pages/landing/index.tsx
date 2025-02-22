@@ -1,7 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-const LandingPage = () => {
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Header Section */}
@@ -11,9 +11,7 @@ const LandingPage = () => {
             {/* Logo */}
             <div className="flex items-center space-x-3">
               <div className="relative w-12 h-12">
-                <div className="absolute inset-0 bg-black rounded-xl transform transition-transform hover:scale-105 hover:shadow-2xl"></div>
-                <div className="absolute inset-[3px] bg-white rounded-lg"></div>
-                <div className="absolute inset-[6px] bg-black rounded-md"></div>
+                <img src="/logo.svg" alt="FlyExplorer" className="w-full h-full object-cover" />
               </div>
               <span className="text-3xl font-bold tracking-tight hover:tracking-wide transition-all">
                 <a href="/">FlyExplorer</a>
@@ -65,13 +63,13 @@ const LandingPage = () => {
                            transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                 >
                   <span className="relative z-10">Get Started</span>
-                  <div className="absolute inset-0 bg-black rounded-2xl transition-all 
+                  <div className="absolute inset-0 bg-black/20 rounded-2xl transition-all 
                                 group-hover:scale-105 group-hover:opacity-50"></div>
                 </Link>
                 <Link
                   to="/"
                   className="group px-8 py-4 text-xl font-medium rounded-2xl border-2 border-gray-200
-                           transition-all duration-300 hover:border-black hover:shadow-2xl"
+                           transition-all duration-300 hover:border-white/20 hover:shadow-2xl"
                 >
                   Learn More
                 </Link>
@@ -103,7 +101,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-gray-600">
-              © 2024 FlyExplorer. Built with AI.
+              © 2024 FlyExplorer.
             </div>
             <div className="flex space-x-8">
               {['Privacy Policy', 'Terms of Service'].map((item) => (
@@ -122,5 +120,3 @@ const LandingPage = () => {
     </div>
   );
 };
-
-export default LandingPage; 

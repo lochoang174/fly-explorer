@@ -1,8 +1,5 @@
 import * as React from "react";
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 import { PanelLeft } from "lucide-react";
@@ -30,6 +27,7 @@ import {
 
 // Import data
 import { AuthenticatedRoutesMetadata } from "src/routes/RootRoutes";
+import Data from "../data";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -281,6 +279,7 @@ const SidebarTrigger = React.forwardRef<
   const location = useLocation();
   const parts = location.pathname.split("/").filter((part) => part !== "");
 
+  console.log("PART:", parts);
   return (
     <div className="flex items-center border-b px-3 py-2 max-h-[45px]">
       <Button
@@ -288,7 +287,7 @@ const SidebarTrigger = React.forwardRef<
         data-sidebar="trigger"
         variant="ghost"
         size="icon"
-        className={cn("h-7 w-7 me-2", className)}
+        className={cn("", className)}
         onClick={(event) => {
           onClick?.(event);
           toggleSidebar();
@@ -308,21 +307,31 @@ const SidebarTrigger = React.forwardRef<
             </BreadcrumbLink>
           </BreadcrumbItem>
           {parts.length > 0 &&
-            parts.map((part) => (
+            parts.map((part, index) => (
               <React.Fragment key={`${part}-seperator`}>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem key={`${part}-item`}>
-                  <BreadcrumbLink
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/${part}`)}
-                  >
-                    {AuthenticatedRoutesMetadata.get(`/${part}`)}
-                  </BreadcrumbLink>
+                  {part[0] === "app" ? (
+                    <span className="text-gray-500">
+                      {AuthenticatedRoutesMetadata.get(`/${part}`) || part}
+                    </span>
+                  ) : (
+                    <BreadcrumbLink
+                      className="cursor-pointer"
+                      onClick={() => navigate(`/app/${part}`)}
+                    >
+                      {AuthenticatedRoutesMetadata.get(`/app/${part}`) || part}
+                    </BreadcrumbLink>
+                  )}
                 </BreadcrumbItem>
               </React.Fragment>
             ))}
         </BreadcrumbList>
       </Breadcrumb>
+
+      <div className="ml-auto">
+        <Data className="" />
+      </div>
     </div>
   );
 });

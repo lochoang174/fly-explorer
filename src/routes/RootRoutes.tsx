@@ -28,11 +28,7 @@ import LandingPage from "src/pages/landing";
 
 export const AuthenticatedRoutesMetadata = new Map([
   ["/", import.meta.env.VITE_APP_NAME],
-  ["/conversation", "Conversation"],
-  ["/documents", "Documents"],
-  ["/twitter", "Twitter"],
-  ["/pitchdesk", "Pitchdesk"],
-  ["/settings", "Settings"],
+  ["/app/conversation", "Conversation"],
 ]);
 
 // const unAuthenticatedRoutes: Array<RouteObject> = [

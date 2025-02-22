@@ -2,11 +2,11 @@ import cn from "classnames";
 import { Link } from "react-router-dom";
 import {
   MessageCircle,
-  FileBox,
-  Twitter,
-  MessageSquareShare,
-  Youtube,
-  QrCode, 
+  // FileBox,
+  // Twitter,
+  // MessageSquareShare,
+  // Youtube,
+  // QrCode, 
   ChartNetwork
 } from "lucide-react";
 // Import components

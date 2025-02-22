@@ -21,10 +21,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
 import { Button } from "src/components/ui/button";
@@ -146,9 +143,6 @@ function DataCard(props: DataCardProps) {
 export default function Data({ className }: DataProps) {
   const { list, setListKnowledge } = useKnowledgeState();
 
-  const _className =
-    "flex flex-col h-screen max-h-[calc(100dvh-45px-16px)] border-s";
-
   React.useEffect(() => {
     KnowledgeAPI.getKnowledge("").then((list) => {
       console.log(list);
@@ -157,9 +151,10 @@ export default function Data({ className }: DataProps) {
   }, []);
 
   return (
+    <div className={cn("", className)}>
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Data Crawl</Button>
+        <Button variant="secondary" className="">Data Crawl</Button>
       </SheetTrigger>
       <SheetContent className="">
         <div className="flex items-center gap-1 pb-2 border-b mb-2">
@@ -190,7 +185,8 @@ export default function Data({ className }: DataProps) {
             <Button variant="outline" className="p-4 shadow-lg">Extension crawler</Button>
           </SheetClose>
         </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
+    </div>
   );
 }
