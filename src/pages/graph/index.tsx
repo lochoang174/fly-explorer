@@ -63,7 +63,8 @@ export default function GraphPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const url = `http://3.85.218.160:3000/data`;
+
+      const url = `${import.meta.env.VITE_API_SERVER_URL}/data`;
       const response = await axios.get(url);
       if (!response.data) return;
 
