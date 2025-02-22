@@ -1,19 +1,18 @@
-
 // Import components
 import { SidebarProvider, SidebarTrigger } from "src/components/ui/sidebar";
 import { AppSidebar } from "src/components/app-sidebar";
 import NotConnectWallet from "src/components/not-connect-wallet";
-import { useWallet } from '@razorlabs/razorkit';
+import { useWallet } from "@razorlabs/razorkit";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const wallet = useWallet()
+  const wallet = useWallet();
   return (
-    <>      {(!wallet.connected ) && <NotConnectWallet />}
-
+    <>
+      {!wallet.connected && <NotConnectWallet />}
       <SidebarProvider>
         <AppSidebar />
         <div className="py-2 pe-2 w-full h-screen max-h-screen">

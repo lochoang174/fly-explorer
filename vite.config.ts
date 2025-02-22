@@ -7,6 +7,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ["react/jsx-runtime"],
   },
+  
   resolve: {
     alias: [{ find: "src", replacement: "/src" }],
   },

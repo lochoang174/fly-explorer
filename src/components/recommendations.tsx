@@ -5,8 +5,6 @@ import {
   HardDriveUpload,
   ScanQrCode,
 } from "lucide-react";
-import { useConversationState } from "src/states/conversation";
-import { ConversationUtils } from "src/objects/conversation/utils";
 
 export type RecommendationProps = {
   className?: string; // Cho phép tuỳ chỉnh class từ bên ngoài

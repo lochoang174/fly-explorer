@@ -1,5 +1,5 @@
 // import React from "react";
-import { Outlet, useRoutes, Navigate } from "react-router-dom";
+import { Outlet, useRoutes } from "react-router-dom";
 
 // Import components
 // import Signin from "src/pages/auth/components/sign-in";
@@ -24,14 +24,11 @@ import HomePage from "src/pages/home";
 // Import types
 import type { RouteObject } from "react-router-dom";
 import GraphPage from "src/pages/graph";
+import LandingPage from "src/pages/landing";
 
 export const AuthenticatedRoutesMetadata = new Map([
   ["/", import.meta.env.VITE_APP_NAME],
-  ["/conversation", "Conversation"],
-  ["/documents", "Documents"],
-  ["/twitter", "Twitter"],
-  ["/pitchdesk", "Pitchdesk"],
-  ["/settings", "Settings"],
+  ["/app/conversation", "Conversation"],
 ]);
 
 // const unAuthenticatedRoutes: Array<RouteObject> = [
@@ -58,6 +55,10 @@ export const AuthenticatedRoutesMetadata = new Map([
 const rootRoutes: Array<RouteObject> = [
   {
     path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/app",
     element: (
       <DashboardLayout>
         <Outlet />
@@ -65,21 +66,17 @@ const rootRoutes: Array<RouteObject> = [
     ),
     children: [
       {
-        path: "/conversation",
+        path: "conversation",
         element: <HomePage />,
       },
       {
-        path: "/graph",
+        path: "graph",
         element: <GraphPage />,
       },
-      {
-        path: "/",
-        element: <Navigate to="/conversation" replace />,
-      },
-      {
-        path: "*",
-        element: <Navigate to="/conversation" />,
-      }
+      // {
+      //   path: "*",
+      //   element: <Navigate to="/conversation" />,
+      // }
     ],
   },
 ];

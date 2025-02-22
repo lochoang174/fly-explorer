@@ -2,11 +2,11 @@ import cn from "classnames";
 import { Link } from "react-router-dom";
 import {
   MessageCircle,
-  FileBox,
-  Twitter,
-  MessageSquareShare,
-  Youtube,
-  QrCode, 
+  // FileBox,
+  // Twitter,
+  // MessageSquareShare,
+  // Youtube,
+  // QrCode, 
   ChartNetwork
 } from "lucide-react";
 // Import components
@@ -28,12 +28,12 @@ import WalletInformationBox from "./wallet-information-box";
 // Menu items.
 const items = [
   {
-    url: "/conversation",
+    url: "/app/conversation",
     icon: MessageCircle,
     label: "Conversation",
   },
   {
-    url: "/graph",
+    url: "/app/graph",
     icon: ChartNetwork ,
     label: "Graph",
   },

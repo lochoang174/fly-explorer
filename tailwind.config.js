@@ -60,6 +60,20 @@ export default {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			}
+  		},
+  		animation: {
+  			'spin-slow': 'spin 20s linear infinite',
+  			'spin-reverse': 'spin-reverse 15s linear infinite',
+  		},
+  		keyframes: {
+  			'spin-reverse': {
+  				from: {
+  					transform: 'rotate(360deg)'
+  				},
+  				to: {
+  					transform: 'rotate(0deg)'
+  				},
+  			}
   		}
   	}
   },
