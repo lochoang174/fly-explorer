@@ -241,6 +241,12 @@ export default function ConversationController() {
             return;
           }
 
+          if (data.length > 1) {
+            if (data[1].params) {
+              console.log("Param:", data[1].params?.relevantPosts);
+            }
+          }
+
           // Frontend gets response from AI, there are many steps to do:
           // 1. Create dialog for AI (shouldn't replace).
           // 2. Process Reasoning by add it to dialog (I can replace this step).

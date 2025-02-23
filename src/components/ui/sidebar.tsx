@@ -279,7 +279,6 @@ const SidebarTrigger = React.forwardRef<
   const location = useLocation();
   const parts = location.pathname.split("/").filter((part) => part !== "");
 
-  console.log("PART:", parts);
   return (
     <div className="flex items-center border-b px-3 py-2 max-h-[45px]">
       <Button

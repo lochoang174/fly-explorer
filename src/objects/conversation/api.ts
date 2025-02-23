@@ -57,6 +57,8 @@ export class ConversationAPI {
         user: "user",
       });
 
+      console.log("Response:", response.data);
+
       // Simulate delay of response
       // await OtherUtils.wait(1000);
 
