@@ -51,13 +51,24 @@ export class ConversationAPI {
       // Test url
       // const url = "/conversations/one.json";
       const url = `/${agentId}/message`;
-      console.log("Message URL:", url);
+      const newInput: string = input.toLowerCase();
+      if (
+        newInput.includes("insight") ||
+        newInput.includes("give me insight") ||
+        newInput.includes("what post about") ||
+        newInput.includes("give me") ||
+        newInput.includes("data") ||
+        newInput.includes("purpose") ||
+        newInput.includes("author post") ||
+        newInput.includes("post about") ||
+        newInput.includes("post about author")
+      ) {
+        input = newInput + " this is action DATA_INSIGHT";
+      }
       const response = await api.post<any, Array<ChatAIResponseDataType>>(url, {
         text: input,
         user: "user",
       });
-
-      console.log("Response:", response.data);
 
       // Simulate delay of response
       // await OtherUtils.wait(1000);

@@ -203,10 +203,21 @@ export default function ConversationController() {
 
     // Handle submit
     const handleSubmit = function (target: HTMLDivElement) {
-      const contentMetadata = _getContentMetadata(target);
+       const contentMetadata = _getContentMetadata(target);
+      console.log("Content:", contentMetadata);
       const userDialog = ConversationUtils.createDialog(
         contentMetadata.content
       );
+      
+      // Find content: "insight || give me " -> add action: DATA_INSIGHT
+      const findContent: string = contentMetadata.content.toLowerCase();
+      // codition: "insight data", "what is the data", "show me the data purpose",
+      // "give me insights", "data insight", "what is author post", "give me author post", "what post about", "what post about author"
+      if (findContent.includes("insight") || findContent.includes("what post about") || findContent.includes("give me") || findContent.includes("data") || findContent.includes("purpose") || findContent.includes("author post") || findContent.includes("post about") || findContent.includes("post about author")) {
+        contentMetadata.action = "DATA_INSIGHT";
+        contentMetadata.content = contentMetadata.content + " this is action DATA_INSIGHT";
+      }
+      console.log("User Dialog:", userDialog);
 
       // Add placeholder for AI's Response
       const aiPlaceHolderDialog = ConversationUtils.createDialog(
