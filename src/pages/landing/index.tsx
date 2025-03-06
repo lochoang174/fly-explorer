@@ -20,7 +20,7 @@ export default function LandingPage() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-12">
-              {['Conversation', 'Graph', 'About'].map((item) => (
+              {['Conversation', 'Graph', 'Bounty', 'About'].map((item) => (
                 <Link
                   key={item}
                   to={`/app/${item.toLowerCase()}`}
