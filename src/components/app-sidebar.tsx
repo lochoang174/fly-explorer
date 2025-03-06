@@ -2,12 +2,8 @@ import cn from "classnames";
 import { Link } from "react-router-dom";
 import {
   MessageCircle,
-  // FileBox,
-  // Twitter,
-  // MessageSquareShare,
-  // Youtube,
-  // QrCode, 
-  ChartNetwork
+  ChartNetwork,
+  Receipt
 } from "lucide-react";
 // Import components
 import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
@@ -37,6 +33,11 @@ const items = [
     icon: ChartNetwork ,
     label: "Graph",
   },
+  {
+    url: "/app/bounty",
+    icon: Receipt,
+    label: "Bounty",
+  }
 ];
 
 const sideBarClassName = cn([
@@ -69,7 +70,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items
-                .filter((item) => item.label === "Conversation" ||item.label === "Graph")
+                .filter((item) => item.label === "Conversation" ||item.label === "Graph" || item.label === "Bounty")
                 .map((item) => (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild>
@@ -89,7 +90,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items
-                .filter((item) => item.label !== "Conversation" && item.label !== "Graph")
+                .filter((item) => item.label !== "Conversation" && item.label !== "Graph" && item.label !== "Bounty")
                 .map((item) => (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild>
